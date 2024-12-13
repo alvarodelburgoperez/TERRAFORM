@@ -1,16 +1,33 @@
-terraform {
-  backend "s3" {
-    encrypt        = true
-    bucket         = "terraform-infrastructure-242201299422"
-    dynamodb_table = "terraform-state-lock-dynamo"
-    key            = "terraform.tfstate"
-    region         = "eu-west-1"
+module "iam" {
+  source      = "./iam"
+  user1_name  = "pepe"
+  user2_name  = "juan"
+}
+
+# locals
+locals {
+  common_tags = {
+    nombre = "Alvaro Del Burgo Perez"
+    iac    = "terraform"
+    env    = "Automatización y despliegue"
   }
 }
 
 provider "aws" {
   region = "eu-west-1"
 }
+
+
+# data sources
+data "aws_caller_identity" "current" {}
+
+
+resource "aws_s3_bucket" "data_bucket" {
+  bucket = "bucket-data-${data.aws_caller_identity.current.account_id}"
+  tags   = local.common_tags
+}
+
+
 
 resource "aws_budgets_budget" "ec2" {
   name              = "budget-ec2-monthly"
@@ -66,13 +83,15 @@ resource "aws_budgets_budget" "ec2" {
     subscriber_email_addresses = [var.email]
   }
 
-  tags = {
-    Tag1 = "Value1"
-    Tag2 = "Value2"
-  }
+  tags = local.common_tags
 }
 
-variable "email" {
-  description = "Dirección de correo electrónico para recibir notificaciones"
-  type        = string
+terraform {
+  backend "s3" {
+    encrypt        = true
+    bucket         = "terraform-infrastructure-242201299422"
+    dynamodb_table = "terraform-state-lock-dynamo"
+    key            = "terraform.tfstate"
+    region         = "eu-west-1"
+  }
 }
