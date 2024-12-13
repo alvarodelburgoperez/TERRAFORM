@@ -28,3 +28,8 @@ Comprobamos que aplicamos el comando terraform apply y funciona
 <p align="center">
   <img width='60%' src="https://github.com/alvarodelburgoperez/TERRAFORM/blob/main/assets/apply2.png" />
 </p>
+
+Vemos que se han creado los usuarios
+<p align="center">
+  <img width='60%' src="https://github.com/alvarodelburgoperez/TERRAFORM/blob/main/assets/usuarios.png" />
+</p>
